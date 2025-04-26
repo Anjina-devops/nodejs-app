@@ -21,7 +21,7 @@ resource "aws_instance" "anjina-hcl" {
   subnet_id = module.vpc.public_subnets[0]
   
   tags = {
-    Name = "hcl-hackthon0322"
+    Name = "hcl-anjina0322"
   }
 }
 resource "aws_security_group" "allow_all" {
