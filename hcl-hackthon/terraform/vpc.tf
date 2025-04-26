@@ -15,5 +15,6 @@ module "vpc" {
 
   tags = {
     Name = "eks-vpc"
+    Project = "Jigini-hcl"
   }
 }
