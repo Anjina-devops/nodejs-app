@@ -18,7 +18,7 @@ resource "aws_instance" "exahcl-hackthon" {
 
   security_groups = [ aws_security_group.allow_all.id ]
   vpc_security_group_ids = [ aws_security_group.allow_all.id ]
-  subnet_id = module.aws.subnet_id
+  subnet_id = module.vpc.public_subnets[0]
   
   tags = {
     Name = "hcl-hackthon0322"
