@@ -8,7 +8,7 @@ output "cluster_name" {
   value       = module.eks.cluster_name
 }
 
-output "kubeconfig" {
+/* output "kubeconfig" {
   description = "Kubeconfig output"
   value       = module.eks.kubeconfig
-}
+} */
