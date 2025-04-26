@@ -1,24 +1,19 @@
-#!/bin/bash
+resource "null_resource" "docker_build_push" {
+  provisioner "local-exec" {
+    command = <<EOT
+      #!/bin/bash
+      set -e
 
-# Variables
-AWS_REGION=us-east-1
-ECR_REPO="my-nodejs-app"
-IMAGE_TAG="latest"
+      echo "Building Docker Image..."
+      docker build -t ${aws_ecr_repository.nodejs_app_repo.repository_url}:latest ./app
 
-# Get Account ID
-ACCOUNT_ID=$(aws sts get-caller-identity --query Account --output text)
+      echo "Logging into ECR..."
+      aws ecr get-login-password --region ${var.region} | docker login --username AWS --password-stdin ${aws_ecr_repository.nodejs_app_repo.repository_url}
 
-# Authenticate Docker to AWS ECR
-aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com
+      echo "Pushing Docker Image to ECR..."
+      docker push ${aws_ecr_repository.nodejs_app_repo.repository_url}:latest
+    EOT
+  }
 
-# Build Docker image
-docker build -t $ECR_REPO .
-
-# Tag image
-docker tag $ECR_REPO:latest $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
-
-# Push image to ECR
-docker push $ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPO:$IMAGE_TAG
-
-
-#To run this app use : chmod +x build_push_ecr.sh ./build_push_ecr.sh
+  depends_on = [aws_ecr_repository.nodejs_app_repo]
+}
