@@ -13,5 +13,6 @@ output "cluster_name" {
   value       = module.eks.kubeconfig
 } */
 output "vpc_id" {
-  value = module.vpc.name.id
+  value = module.vpc.vpc_id
+
 }
