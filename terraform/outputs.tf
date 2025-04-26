@@ -1,11 +1,14 @@
-output "vpc_id" {
-  value = aws_vpc.main.id
+output "cluster_endpoint" {
+  description = "EKS cluster endpoint"
+  value       = module.eks.cluster_endpoint
 }
 
-output "public_subnet_ids" {
-  value = aws_subnet.public[*].id
+output "cluster_name" {
+  description = "EKS cluster name"
+  value       = module.eks.cluster_name
 }
 
-output "private_subnet_ids" {
-  value = aws_subnet.private[*].id
+output "kubeconfig" {
+  description = "Kubeconfig output"
+  value       = module.eks.kubeconfig
 }
