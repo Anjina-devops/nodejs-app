@@ -27,7 +27,7 @@ resource "aws_instance" "exahcl-hackthon" {
 resource "aws_security_group" "allow_all" {
   name        = "allow-all-traffic"
   description = "Allow all inbound and outbound traffic"
-  vpc_id      = module.vpc.subnet_id  # Using default VPC
+  vpc_id = module.vpc.vpc_id# Using default VPC
 
   ingress {
     description = "Allow all inbound"
