@@ -1,0 +1,55 @@
+name: Deploy Node.js App with Terraform
+
+on:
+  push:
+    branches:
+      - main
+
+env:
+  AWS_REGION: us-east-1
+  ECR_REPOSITORY: my-nodejs-app
+  TERRAFORM_VERSION: 1.6.6
+  DOCKER_IMAGE_TAG: latest
+
+jobs:
+  deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Terraform
+      uses: hashicorp/setup-terraform@v3
+      with:
+        terraform_version: ${{ env.TERRAFORM_VERSION }}
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Build Docker image
+      run: |
+        docker build -t $ECR_REPOSITORY:$DOCKER_IMAGE_TAG ./app
+
+    - name: Authenticate Docker to ECR
+      run: |
+        aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com
+
+    - name: Tag and Push Docker image to ECR
+      run: |
+        docker tag $ECR_REPOSITORY:$DOCKER_IMAGE_TAG ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$DOCKER_IMAGE_TAG
+        docker push ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY:$DOCKER_IMAGE_TAG
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Plan
+      run: terraform plan
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
