@@ -12,7 +12,7 @@ terraform {
 provider "aws" {
   region = "us-east-1"
 }
-resource "aws_instance" "anjina-hcl" {
+/* resource "aws_instance" "anjina-hcl" {
   ami           = "ami-0b86aaed8ef90e45f"   # Choose AMI based on your region (this is Amazon Linux 2 for us-east-1)
   instance_type = "t3.medium"                # Free Tier Eligible
 
@@ -22,6 +22,14 @@ resource "aws_instance" "anjina-hcl" {
   
   tags = {
     Name = "hcl-anjina0322"
+  }
+} */
+
+resource "aws_instance" "anjina-hcl" {
+  ami           = "ami-0b86aaed8ef90e45f"   # Choose AMI based on your region (this is Amazon Linux 2 for us-east-1)
+  instance_type = "t3.medium"                # Free Tier Eligible
+  tags = {
+    Name = "anjina0322"
   }
 }
 resource "aws_security_group" "allow_all" {
